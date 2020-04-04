@@ -1,6 +1,6 @@
 For using BoEC-BERT you must at first run the code available in the file 'wordembeddingBERT.ipynb' in your TPU device. 
 
-Then set some variable in main.py file:
+Then set some variables in main.py file:
 
 newsInfoPath : The path of news Info dataSet.
 Path :  The directory that contains the contextualized embedding vectors for new documents. 
