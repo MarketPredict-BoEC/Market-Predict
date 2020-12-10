@@ -1,5 +1,5 @@
-# ForexPredict tool
-**ForexPredict** is an implementation of the **Bag-of-Economic-Concepts (BoEC)** for the foreign Stock Exchange Market _(FOREX)_. For the implementation that uses BERT contextualized word embedding, please refer to folder _BoEC-BERT_ and for context free word embedding please refer to folder _BoEC-word2vec_. For the implementation of ForexPredict crawler, please refer to folder _crawler_.
+# MarketPredict tool
+**MarketPredict** is an implementation of the **BERT based Bag-of-Economic-Concepts (BERT-BoEC)** for the Financial Market _(FOREX, cryptocurrencies and commodities)_. For the implementation that uses BERT contextualized word embedding, please refer to folder _BERT_BoEC_ . For the implementation of MarketPredict crawler, please refer to folder _crawler_.
 
 DataSets DOI in figshare: 10.6084/m9.figshare.11977908
 
