@@ -1,4 +1,4 @@
-Forexpredict tool
+MarketPredict tool
 
 **crawler implementation**
 
