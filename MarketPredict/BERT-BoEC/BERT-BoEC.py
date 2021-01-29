@@ -5,10 +5,6 @@
 #######################################
 
 
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
 
 
 from tensorflow.keras.models import load_model
@@ -32,14 +28,14 @@ from tensorflow import keras
 from matplotlib import pyplot as plt
 from datetime import timedelta
 
-# In[2]:
+
 
 
 df1 = pd.read_excel('outputEURUSDnews.xlsx')
 marketDF = pd.read_excel('EURUSDDailyIndicators.xlsx')
 
 
-# In[3]:
+
 
 
 FUTURE_PERIOD_PREDICT = 1 
@@ -59,7 +55,6 @@ marketDF = marketDF.drop('future',1)
 
 
 
-# In[4]:
 
 
 marketDF['timestamp'] = marketDF['Date']#+'T'+marketDF['time']
@@ -67,7 +62,7 @@ marketDF['timestamp'] = pd.to_datetime(marketDF['timestamp'])
 marketDF = marketDF.set_index('timestamp')
 
 
-# In[5]:
+
 
 
 def normalization(df):
@@ -89,8 +84,7 @@ def normalization(df):
     return df
 
 
-# In[6]:
-# In[10]:
+
 def modify(s):
    
     vec = s.replace('[','')
@@ -100,26 +94,9 @@ def modify(s):
     vec = list(vec)
     return vec
 
-def getNews_embedding(currentDate,df):
-    
-    news_date = df.index.values
-    empty_vector = np.zeros((max_L,embedding_dim))
-    if ( currentDate not in news_date ):
-        return(empty_vector)
-    else:
-        vector = np.zeros((max_L,embedding_dim))
-        if(type( df.loc[currentDate,'vector']))==type('test'):
-            
-            vector[0] =np.asarray( modify(df.loc[currentDate,'vector']))
-            
-        else:
-            i = 0;
-            for nItem in df.loc[var,'vector']:
-                vector[i] =np.asarray( modify(nItem))
-                i = i+ 1
-        return vector
+
 SEQ_LEN_news = 7   
-def getNews_embedding2(currentDate,df):
+def getNews_embedding(currentDate,df):
     
     news_date = df.index.values
     prevDate = currentDate - timedelta(hours = SEQ_LEN_news)
@@ -146,11 +123,11 @@ def preprocess_df(df,newsDF):
         
         prev_days.append([n for n in row[:-1]])  # store all but the target
         if len(prev_days) == SEQ_LEN:  # make sure we have 10 sequences!
-            sequential_data.append([np.array(prev_days), row[-1],getNews_embedding2(d,newsDF),d])  # i[-1] is the sequence target
+            sequential_data.append([np.array(prev_days), row[-1],getNews_embedding(d,newsDF),d])  # i[-1] is the sequence target
            
 
     
-    #random.shuffle(sequential_data)  # shuffle for good measure.
+   
     
 
     X = []
@@ -169,22 +146,7 @@ def preprocess_df(df,newsDF):
     return np.array(X), np.array(y) , np.array(newsX) ,dates # return X and y...and make X a numpy array!
 
 
-# In[7]:
-'''
 
-#get_ipython().run_line_magic('matplotlib', 'inline')
-marketDF.plot(subplots=True,
-        layout=(6, 3),
-        figsize=(22,22),
-        fontsize=10, 
-        linewidth=2,
-        sharex=False,
-        title='Visualization of the original Time Series')
-plt.show()
-plt.savefig('EURUSDHourlydataPlot.jpg')
-'''
-
-# In[8]:
 
 
 dates = sorted(marketDF.index.values)  # get the dates
@@ -206,19 +168,11 @@ print(main_df.head())
 print(main_df.describe())
 
 
-# In[9]:
 
 
 from datetime import datetime
 df= pd.read_excel('outputEURUSDnews.xlsx')
-'''
-df['timestamp'] = pd.to_datetime(df['pubDate'])
-df.sort_values(by=['timestamp'], inplace=True)
-df['date'] = [w.date() for w in df['timestamp']]
-df['time'] = [w.time() for w in df['timestamp']]
-df['hour'] =   [datetime.strftime(w,'%H') for w in  df['timestamp']]
 
-'''
 var  =[]
 for i in range(len(df)):
     d = pd.to_datetime(df.loc[i,'date'])
@@ -246,7 +200,7 @@ print(train_news_x.shape)
 print(validation_news_x.shape)
 
 
-# In[15]:
+
 
 
 # trade data RNN
@@ -257,10 +211,9 @@ dim = train_x.shape[1] #7 delay window
 marketModel = Sequential()
 marketModel.add(LSTM(128, input_shape=(train_x.shape[1:])))
 marketModel.add(Dropout(0.2))
-#marketModel.add(Activation("relu"))
 
 
-# In[16]:
+
 
 from tensorflow.keras.regularizers import l2
 
@@ -272,37 +225,26 @@ x = Conv1D(filters=64, kernel_size=3,
            input_shape = inputShape ,kernel_regularizer =l2(15e-3))(inputs)#kernel_regularizer =l2(5e-2)
 x = MaxPooling1D(pool_size=2)(x)
 x = Dropout(0.2)(x)
-#x = Activation("relu")(x)
 x = LSTM(128) (x)#, kernel_regularizer =l2(5e-2),recurrent_regularizer=l2(5e-2))
 BoEC_RCNN = Model(inputs, x)
 
 
-# In[17]:
 
 
 # concatenate news and market output 
 
 combinedInput = concatenate([marketModel.output, BoEC_RCNN.output])
-#x = Dense(2, activation="softmax")(combinedInput)
-
-x = Dense(1, activation='sigmoid',kernel_regularizer=l2(15e-3),)(combinedInput)
+x = Dense(2, activation="softmax")(combinedInput)
 
 model = Model(inputs=[marketModel.input, BoEC_RCNN.input], outputs=x)
 
 
-# In[18]:
 
 
 from tensorflow.keras.optimizers import Adam
 opt = tf.keras.optimizers.Adam(lr=0.001, decay=1e-6)
 
-'''
-model.compile(
-    loss=tf.keras.losses.MeanAbsolutePercentageError(),
-    optimizer=opt
-   
-)
-'''
+
 model.compile(loss="binary_crossentropy", 
               optimizer='Adam',
                metrics=['accuracy'])
@@ -310,7 +252,7 @@ model.compile(loss="binary_crossentropy",
 model.summary()
 
 
-# In[19]:
+
 
 
 # train the model
@@ -323,7 +265,7 @@ history = model.fit(
 model.save("EURUSDWithNewsHourly.h5")
 
 
-# In[20]:
+
 
 def plot_loss(history):
   plt.plot(history.history['loss'], label='loss')
@@ -341,7 +283,7 @@ plt.show()
 def plot_accuracy(history):
   plt.plot(history.history['accuracy'], label='Training Accuracy')
   plt.plot(history.history['val_accuracy'], label='Validation Accuracy')
-  #plt.ylim([0, 10])
+ 
   plt.xlabel('Epoch')
   plt.ylabel('Accuracy')
   plt.legend()
