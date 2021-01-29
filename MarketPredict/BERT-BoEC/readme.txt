@@ -9,4 +9,4 @@ conceptNumbers : Number of concept clusters
 topN : Number of top N most similar words for title expansion
 
 
-Then you must put the News and Market dataset in following path and run the main.py.The model got the evaluation metrics.
+Then you must put the News and Market dataset in following path and run the BERT-BoEC.py to train predictive model.
