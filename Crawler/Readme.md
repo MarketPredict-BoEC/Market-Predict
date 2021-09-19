@@ -20,6 +20,7 @@ After scraping, we statndard all scraped news based on following attributes. All
 |   link      | News link     |https://www.fxstreet.com/news/eur-usd-turkey-risks-could-trigger-overdue-correction-lower-for-the-euro-mufg-202008071657 |No|
 |   thImage      | URL of news thumbnail image     | URL of news thumbnail image | Yes
 |    images | URLs of images in news body    |  Array of URLs of news images  |No
+
 The code crawled news documents from different news sources and store them in MongoDB collections.
 The newsgroups are :
 	
@@ -28,5 +29,5 @@ The newsgroups are :
 	Google news API for Routers and Bloomberg sources, but in limitted version.
 	
 
-For running this code, please first run 'main.py' and follow the steps in output Ipython console. you must first create the collections and then start crawling. 
+For running this code, use pip to install dependencies and then run 'main.py' and follow the steps in output Ipython console. you must first create the collections and then start crawling. 
 The crawler will be connected to the news sources pages and scheduled in 60 minutes or day for different sources.
